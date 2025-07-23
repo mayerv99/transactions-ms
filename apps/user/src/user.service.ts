@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { Card } from './card.entity';
 import { CreateCardDto } from './dto/create-card.dto';
 import { CreateDepositDto } from '@app/shared-types/dto/create-deposit.dto';
+import { CreateTransactionDto } from '@app/shared-types/dto/create-transaction.dto';
 
 @Injectable()
 export class UserService {
@@ -35,6 +36,17 @@ export class UserService {
     return this.cardRepository.save(card);
   }
 
+  async getUserByCardId(cardId: string) {
+    const cardData = await this.cardRepository.findOne({
+      where: { id: cardId },
+      relations: ['user'],
+    });
+    if (!cardData) return;
+
+    const { user } = cardData;
+    return user;
+  }
+
   async addNewDeposit(depositDto: CreateDepositDto) {
     const cardData = await this.cardRepository.findOne({
       where: { id: depositDto.cardId },
@@ -45,6 +57,13 @@ export class UserService {
     const { user } = cardData;
 
     user.balanceInCents += depositDto.amountInCents;
+    return this.userRepository.save(user);
+  }
+  async addNewPurchase(purchaseDto: CreateTransactionDto) {
+    const user = await this.getUserByCardId(purchaseDto.cardId);
+    if (!user) return;
+
+    user.balanceInCents -= purchaseDto.amountInCents;
     return this.userRepository.save(user);
   }
 }

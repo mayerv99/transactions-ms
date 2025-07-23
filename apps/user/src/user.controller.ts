@@ -5,6 +5,7 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { Card } from './card.entity';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CreateDepositDto } from '@app/shared-types/dto/create-deposit.dto';
+import { CreateTransactionDto } from '@app/shared-types/dto/create-transaction.dto';
 
 @Controller()
 export class UserController {
@@ -27,5 +28,10 @@ export class UserController {
   async handleDepositCreated(@Payload() depositDto: CreateDepositDto) {
     console.log('Entrou aqui no MessagePattern');
     await this.userService.addNewDeposit(depositDto);
+  }
+  @MessagePattern('purchase')
+  async handlePurchaseCreated(@Payload() purchaseDto: CreateTransactionDto) {
+    console.log('Nova compra');
+    await this.userService.addNewPurchase(purchaseDto);
   }
 }

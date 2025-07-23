@@ -4,6 +4,7 @@ import { TransactionsService } from './transactions.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Deposit } from './deposit.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Transaction } from './transaction.entity';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       autoLoadEntities: true,
       logging: true,
     }),
-    TypeOrmModule.forFeature([Deposit]),
+    TypeOrmModule.forFeature([Deposit, Transaction]),
     ClientsModule.register([
       {
         name: 'TRANSACTIONS_SERVICE',
